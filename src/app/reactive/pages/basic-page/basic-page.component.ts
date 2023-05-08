@@ -51,7 +51,7 @@ export class BasicPageComponent implements OnInit {
     return null;
   }
 
-  onSave(): void {
+  onSubmit(): void {
     if(this.myForm.invalid) {
       this.myForm.markAllAsTouched();
       return;
