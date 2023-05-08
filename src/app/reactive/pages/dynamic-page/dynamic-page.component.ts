@@ -23,6 +23,10 @@ export class DynamicPageComponent {
     return this.myForm.get('favoritedGames') as FormArray;
   }
 
+  onDeleteFavorite(index: number): void {
+    this.favoritedGames.removeAt(index);
+  }
+
   onSubmit(): void {
     if(this.myForm.invalid) {
       this.myForm.markAllAsTouched();
