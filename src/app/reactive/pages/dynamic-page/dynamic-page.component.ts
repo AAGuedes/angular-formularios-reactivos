@@ -1,5 +1,6 @@
 import { Component } from '@angular/core';
 import { FormArray, FormBuilder, FormGroup, Validators, FormControl } from '@angular/forms';
+import { ValidatorsService } from '../../../shared/services/validators.service';
 
 
 @Component({
@@ -7,9 +8,9 @@ import { FormArray, FormBuilder, FormGroup, Validators, FormControl } from '@ang
 })
 export class DynamicPageComponent {
 
-  public myForm: FormGroup = this.fb.group({
+  public myForm: FormGroup = this.formBuilder.group({
     name: ['', [ Validators.required, Validators.minLength(3) ]],
-    favoriteGames: this.fb.array([
+    favoriteGames: this.formBuilder.array([
       ['Metal Gear', Validators.required ],
       ['Death Stranding', Validators.required ],
     ])
@@ -17,15 +18,17 @@ export class DynamicPageComponent {
 
   public newFavorite: FormControl = new FormControl('', Validators.required );
 
-  constructor( private fb: FormBuilder ) {}
+  constructor(
+    private formBuilder: FormBuilder,
+    private validatorsService: ValidatorsService
+  ) {}
 
   get favoriteGames() {
     return this.myForm.get('favoriteGames') as FormArray;
   }
 
   isValidField( field: string ): boolean | null {
-    return this.myForm.controls[field].errors &&
-           this.myForm.controls[field].touched;
+    return this.validatorsService.isValidField(this.myForm, field);
   }
 
   isValidFieldInArray( formArray: FormArray, index: number ) {
@@ -54,7 +57,7 @@ export class DynamicPageComponent {
     const newGame = this.newFavorite.value;
 
     this.favoriteGames.push(
-      this.fb.control( newGame, Validators.required )
+      this.formBuilder.control( newGame, Validators.required )
     );
 
     this.newFavorite.reset();
@@ -71,7 +74,7 @@ export class DynamicPageComponent {
       return;
     }
 
-    (this.myForm.controls['favoriteGames'] as FormArray ) = this.fb.array([]);
+    (this.myForm.controls['favoriteGames'] as FormArray ) = this.formBuilder.array([]);
     this.myForm.reset();
   }
 
